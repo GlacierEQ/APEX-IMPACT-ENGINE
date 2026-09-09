@@ -53,7 +53,7 @@ class ImpactEngine:
         ranked = [
             RankedAction(a.action_id, self._score_action(a, phase, snapshot), a.description)
             for a in snapshot.actions
-            if (a.changes_target_state or a.unblocks_mission) and a.action_id not in invalidated
+            if a.executable_now and (a.changes_target_state or a.unblocks_mission) and a.action_id not in invalidated
         ]
         ranked.sort(key=lambda a: (-a.score, a.action_id))
         return tuple(ranked)
