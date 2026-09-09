@@ -17,7 +17,8 @@ def _quality(data: dict) -> QualitySet:
 
 def _snapshot(data: dict) -> MissionSnapshot:
     actions = tuple(ActionCandidate(a["action_id"], a["description"], a.get("scores", {}),
-        bool(a.get("changes_target_state", False)), bool(a.get("unblocks_mission", False)), tuple(a.get("flags", ()))) for a in data.get("actions", ()))
+        bool(a.get("changes_target_state", False)), bool(a.get("unblocks_mission", False)), tuple(a.get("flags", ())),
+        bool(a.get("executable_now", True)), a.get("boundary_reason")) for a in data.get("actions", ()))
     impacts = tuple(ImpactSignal(i["signal_id"], i["summary"], tuple(i.get("invalidates_actions", ())), i.get("score_adjustments", {})) for i in data.get("impacts", ()))
     previous = data.get("previous_phase")
     return MissionSnapshot(_quality(data["system_quality"]), _quality(data["result_quality"]), _quality(data["completion_quality"]),
