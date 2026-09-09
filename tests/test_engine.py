@@ -71,5 +71,17 @@ class ImpactEngineTests(unittest.TestCase):
         impact = ImpactSignal("deadline", "new deadline sharply raises b", score_adjustments={"b": 30})
         self.assertEqual(self.engine.evaluate(self.snap(actions=(a, b), impacts=(impact,))).selected_action, "b")
 
+    def test_non_executable_high_score_cannot_win(self):
+        blocked = ActionCandidate("blocked", "valuable but provider boundary unavailable",
+            {"operator_impact": 10, "external_leverage": 10, "result_power": 10, "readiness": 2}, True, False, (), False, "provider write path unavailable")
+        executable = ActionCandidate("executable", "lower raw score but executable now",
+            {"operator_impact": 7, "result_power": 7, "readiness": 10}, True)
+        self.assertEqual(self.engine.evaluate(self.snap(actions=(blocked, executable))).selected_action, "executable")
+
+    def test_only_non_executable_actions_yield_boundary_not_fake_work(self):
+        blocked = ActionCandidate("blocked", "provider boundary unavailable",
+            {"operator_impact": 10, "result_power": 10}, True, False, (), False, "provider write path unavailable")
+        self.assertIsNone(self.engine.evaluate(self.snap(actions=(blocked,))).selected_action)
+
 if __name__ == "__main__":
     unittest.main()
