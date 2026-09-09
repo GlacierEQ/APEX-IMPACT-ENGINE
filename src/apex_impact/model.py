@@ -59,6 +59,8 @@ class ActionCandidate:
     changes_target_state: bool = False
     unblocks_mission: bool = False
     flags: tuple[str, ...] = ()
+    executable_now: bool = True
+    boundary_reason: str | None = None
 
     def __post_init__(self) -> None:
         for name, score in self.scores.items():
