@@ -6,11 +6,13 @@ from typing import Mapping
 
 QUALITY_THRESHOLD = 9.0
 
+
 class Phase(str, Enum):
     BUILD = "BUILD"
     USE = "USE"
     POLISH = "POLISH"
     COMPLETE = "COMPLETE"
+
 
 @dataclass(frozen=True)
 class QualityMetric:
@@ -26,6 +28,7 @@ class QualityMetric:
     @property
     def verified(self) -> bool:
         return bool(self.evidence)
+
 
 @dataclass(frozen=True)
 class QualitySet:
@@ -51,6 +54,7 @@ class QualitySet:
         required = self.required_metrics()
         return min((m.score for m in required), default=0.0)
 
+
 @dataclass(frozen=True)
 class ActionCandidate:
     action_id: str
@@ -67,12 +71,14 @@ class ActionCandidate:
             if not 0 <= score <= 10:
                 raise ValueError(f"{self.action_id}.{name}: score must be in [0, 10]")
 
+
 @dataclass(frozen=True)
 class ImpactSignal:
     signal_id: str
     summary: str
     invalidates_actions: tuple[str, ...] = ()
     score_adjustments: Mapping[str, float] = field(default_factory=dict)
+
 
 @dataclass(frozen=True)
 class MissionSnapshot:
@@ -83,12 +89,15 @@ class MissionSnapshot:
     actions: tuple[ActionCandidate, ...] = ()
     impacts: tuple[ImpactSignal, ...] = ()
     previous_phase: Phase | None = None
+    mission_state_ref: str | None = None
+
 
 @dataclass(frozen=True)
 class RankedAction:
     action_id: str
     score: float
     description: str
+
 
 @dataclass(frozen=True)
 class Decision:
@@ -100,3 +109,7 @@ class Decision:
     impact_trace: tuple[str, ...]
     rationale: str
     reevaluate_after: str = "EVERY_MATERIAL_STATE_CHANGE"
+    ambition_pressure: float = 0.0
+    no_progress_cycles: int = 0
+    route_change_required: bool = False
+    mission_state_ref: str | None = None

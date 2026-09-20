@@ -45,6 +45,23 @@ The engine refuses to let several 10s hide an 8.9. A claimed score without evide
 
 An action that neither changes target state nor genuinely unblocks the mission is not selectable.
 
+## Ambition Runtime
+
+Ambition is executable state, not motivational prose. When the same source-bearing mission_state_ref is observed again without verified movement, the engine accumulates bounded pressure. That pressure:
+
+- raises the value of actions that change target state, unblock the mission, create external leverage, or produce actual result power;
+- penalizes repeating the same action against an unchanged mission state;
+- marks a material route change as required when another executable route exists;
+- never makes heartbeat/status/summary work selectable;
+- resets only when the mission-state reference actually changes or verified progress is explicitly recorded; and
+- can persist across process restarts through APEX_AMBITION_STATE.
+
+Ambition does not grant authority, rewrite the Operator mission, bypass provider boundaries, or manufacture progress. It increases execution pressure inside the already-authorized mission.
+
+Example:
+    export APEX_AMBITION_STATE=~/.apex/ambition-state.json
+    PYTHONPATH=src python -m apex_impact.cli --ambition-state "$APEX_AMBITION_STATE" examples/mission.json
+
 ## Constellation Position
 
 ```text

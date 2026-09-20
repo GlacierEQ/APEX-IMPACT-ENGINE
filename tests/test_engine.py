@@ -85,3 +85,75 @@ class ImpactEngineTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class AmbitionTests(unittest.TestCase):
+    def setUp(self):
+        self.good_system = q(purpose_fit=9.5, capability=9.5, reliability=9.5)
+        self.weak_results = q(mission_progress=5, leverage=5, verified_outcome=5)
+        self.completion = q(completeness=4, polish=4, reuse=4)
+
+    def snap(self, actions, state="mission:v1"):
+        return MissionSnapshot(
+            self.good_system,
+            self.weak_results,
+            self.completion,
+            False,
+            tuple(actions),
+            (),
+            None,
+            state,
+        )
+
+    def test_ambition_pressure_accumulates_when_mission_state_does_not_change(self):
+        engine = ImpactEngine()
+        direct = ActionCandidate("direct", "execute real mission work", {"operator_impact": 9, "result_power": 9}, True)
+        first = engine.evaluate(self.snap((direct,)))
+        second = engine.evaluate(self.snap((direct,)))
+        third = engine.evaluate(self.snap((direct,)))
+        self.assertEqual(first.no_progress_cycles, 0)
+        self.assertEqual(second.no_progress_cycles, 1)
+        self.assertEqual(third.no_progress_cycles, 2)
+        self.assertGreater(third.ambition_pressure, second.ambition_pressure)
+
+    def test_repeated_non_progress_forces_material_route_change_when_available(self):
+        engine = ImpactEngine()
+        repeat = ActionCandidate("repeat", "repeat same route", {"operator_impact": 10, "result_power": 10}, True)
+        alternate = ActionCandidate("alternate", "take materially different executable route", {"operator_impact": 7, "result_power": 7}, True)
+        first = engine.evaluate(self.snap((repeat, alternate)))
+        second = engine.evaluate(self.snap((repeat, alternate)))
+        self.assertEqual(first.selected_action, "repeat")
+        self.assertTrue(second.route_change_required)
+        self.assertEqual(second.selected_action, "alternate")
+        self.assertGreater(second.ambition_pressure, 0)
+
+    def test_real_state_change_resets_ambition_pressure(self):
+        engine = ImpactEngine()
+        action = ActionCandidate("execute", "execute", {"operator_impact": 9, "result_power": 9}, True)
+        engine.evaluate(self.snap((action,), "mission:v1"))
+        engine.evaluate(self.snap((action,), "mission:v1"))
+        pressured = engine.evaluate(self.snap((action,), "mission:v1"))
+        self.assertGreater(pressured.ambition_pressure, 0)
+        advanced = engine.evaluate(self.snap((action,), "mission:v2"))
+        self.assertEqual(advanced.no_progress_cycles, 0)
+        self.assertEqual(advanced.ambition_pressure, 0)
+
+    def test_ambition_never_makes_fake_work_selectable(self):
+        engine = ImpactEngine()
+        support = ActionCandidate("status", "write another status report", {"operator_impact": 10}, False, False, ("status_only",))
+        for _ in range(5):
+            decision = engine.evaluate(self.snap((support,)))
+        self.assertIsNone(decision.selected_action)
+
+    def test_ambition_state_persists_across_engine_restart(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as td:
+            state = Path(td) / "ambition.json"
+            action = ActionCandidate("execute", "execute", {"operator_impact": 9, "result_power": 9}, True)
+            first = ImpactEngine(ambition_state_path=state)
+            first.evaluate(self.snap((action,), "mission:persist"))
+            first.evaluate(self.snap((action,), "mission:persist"))
+            restored = ImpactEngine(ambition_state_path=state)
+            decision = restored.evaluate(self.snap((action,), "mission:persist"))
+            self.assertGreaterEqual(decision.no_progress_cycles, 2)
+            self.assertTrue(state.is_file())
