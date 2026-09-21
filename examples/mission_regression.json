@@ -1,0 +1,58 @@
+{
+  "previous_phase": "COMPLETE",
+  "mission_state_ref": "mission:fileboss-v1-complete",
+  "impacts": [
+    {
+      "signal_id": "new-failure-evidence",
+      "summary": "Post-completion provider regression detected; prior system reliability claim is no longer evidenced",
+      "invalidates_actions": ["celebrate-completion", "archive-and-move-on"],
+      "score_adjustments": {
+        "repair-reliability": 15.0,
+        "celebrate-completion": -20.0
+      }
+    }
+  ],
+  "system_quality": {
+    "purpose_fit": {"score": 9.4, "evidence": ["provider:dropbox-runtime-proof"]},
+    "capability": {"score": 9.3, "evidence": ["commit:organizer-runtime"]},
+    "reliability": {"score": 7.1, "evidence": ["incident:provider-regression-2026-09"]},
+    "integration": {"score": 9.2, "evidence": ["workflow:provider-path"]}
+  },
+  "result_quality": {
+    "mission_progress": {"score": 9.2, "evidence": ["case-state:closed"]},
+    "leverage": {"score": 9.0, "evidence": ["external:confirmed-move"]},
+    "verified_outcome": {"score": 9.1, "evidence": ["provider:live-mutation-receipt"]}
+  },
+  "completion_quality": {
+    "completeness": {"score": 9.0, "evidence": ["handoff:docs-present"]},
+    "polish": {"score": 9.0, "evidence": ["handoff:docs-present"]},
+    "reuse": {"score": 8.8, "evidence": ["handoff:docs-present"]}
+  },
+  "objective_achieved": true,
+  "actions": [
+    {
+      "action_id": "repair-reliability",
+      "description": "Restore the broken reliability dimension with evidenced fix and re-run the critical path.",
+      "changes_target_state": true,
+      "scores": {
+        "operator_impact": 8.5,
+        "blocker_relief": 9.5,
+        "capability_gain": 8.0,
+        "evidence_gain": 9.0,
+        "readiness": 8.0
+      }
+    },
+    {
+      "action_id": "celebrate-completion",
+      "description": "Declare victory and move on.",
+      "flags": ["heartbeat_only", "status_only"],
+      "scores": {"readiness": 10.0}
+    },
+    {
+      "action_id": "archive-and-move-on",
+      "description": "Archive the mission as complete despite the new failure evidence.",
+      "flags": ["easy_to_verify_only"],
+      "scores": {"completion_gain": 9.0}
+    }
+  ]
+}
