@@ -1,4 +1,56 @@
-schema_version: 1
+schema_version: 2
 nodes:
-  - id: repo
-edges: []
+  - id: observation
+    label: Mission Snapshot Ingestion
+    kind: capability
+    readiness: high
+  - id: phase_judgment
+    label: BUILD/USE/POLISH/COMPLETE Determination
+    kind: capability
+    readiness: high
+  - id: action_selection
+    label: Impact-Aware Action Ranking
+    kind: capability
+    readiness: high
+  - id: ambition
+    label: Bounded Ambition Pressure
+    kind: capability
+    readiness: high
+  - id: anti_heartbeat
+    label: Heartbeat and Status-Only Suppression
+    kind: capability
+    readiness: high
+  - id: evidence_gate
+    label: Evidence-Required Quality Gates
+    kind: capability
+    readiness: high
+  - id: composition
+    label: Mega-Skills and Pipeline Composition
+    kind: capability
+    readiness: medium
+  - id: regression
+    label: Phase Regression on New Failure Evidence
+    kind: capability
+    readiness: high
+edges:
+  - from: observation
+    to: phase_judgment
+    relation: feeds
+  - from: phase_judgment
+    to: action_selection
+    relation: constrains
+  - from: ambition
+    to: action_selection
+    relation: pressures
+  - from: anti_heartbeat
+    to: action_selection
+    relation: filters
+  - from: evidence_gate
+    to: phase_judgment
+    relation: gates
+  - from: composition
+    to: action_selection
+    relation: supplies_candidates
+  - from: observation
+    to: regression
+    relation: triggers
