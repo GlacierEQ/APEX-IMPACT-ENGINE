@@ -14,6 +14,21 @@ APEX-IMPACT-ENGINE is a mesh citizen. This file declares the known high-value pe
 | **monolith** | Library roadmap, domain map, control-plane documentation. | https://github.com/GlacierEQ/monolith |
 | **pro-code** | Pro-code standards / APEX control surface. | https://github.com/GlacierEQ/pro-code |
 
+## Deep-Work Pipeline Edges (from mega-skills)
+
+These pipelines are treated as high-value candidate action sources or mission envelopes:
+
+| Pipeline | Family | Typical use by this engine |
+|----------|--------|----------------------------|
+| `inception-to-deployment` | master | Full-span mission that must clear BUILD → USE → POLISH → COMPLETE |
+| `control-plane` | control-plane | Always-on session / guarded operating loop |
+| `memory-fleet` | memory-fleet | Recon + memory synthesis when observation surface is incomplete |
+| `change-swe` | change-swe | Bounded repair when system quality drops below 9 |
+| `cultivate-main` | change-swe | Safe merge of unique work into living main |
+| `anthropic-applied-ai-readiness` | mission | Career / evidence backbone missions |
+
+The engine ranks concrete executable steps; it does not redefine the pipeline DAGs.
+
 ## Intended Composition Edges
 
 ```text
@@ -21,7 +36,7 @@ mega-skills pipelines / mega pyramids
         │
         │  (candidate actions / capability targets)
         ▼
-APEX-IMPACT-ENGINE  ──────►  phase decision + selected action
+APEX-IMPACT-ENGINE  ──────►  phase decision + selected action + ambition pressure
         │                         │
         │                         │
         ▼                         ▼
@@ -30,7 +45,7 @@ aspen-grove-core / runtime     Genius-Mastery progress cycles
 
 - This engine **selects** among actions that may themselves be mega-skills, compound skills, or pipeline steps.
 - It **does not** redefine or fork those skills.
-- Genius-Mastery may treat phase transitions emitted by this engine as durable progress events.
+- Genius-Mastery may treat phase transitions and ambition pressure signals as durable progress events.
 - aspen-grove-core (or equivalent) supplies the observation surface the engine continuously evaluates.
 
 ## Discovery Expectations
@@ -38,16 +53,17 @@ aspen-grove-core / runtime     Genius-Mastery progress cycles
 Any system that wants to treat this engine as a peer should:
 
 1. Read `FOUNDATION.md` for the non-negotiable contracts.
-2. Treat phase state and selected-action records as first-class signals.
+2. Treat phase state, selected-action records, and ambition pressure as first-class signals.
 3. Never bypass the evidence requirement when reporting quality scores into the engine.
+4. Prefer feeding real mission snapshots over synthetic heartbeat traffic.
 
-## Local Skill Linkage (this session)
+## Local Skill Linkage (operator session)
 
-In the current operator environment the following skills are already loaded and relevant:
+Relevant session-level skills that frequently compose with this engine:
 
-- `elite-code-quality` — hierarchical hyper powerful code quality upgrade (used to build this foundation)
+- `elite-code-quality` — hierarchical hyper powerful code quality upgrade
 - `skill-connector-router` — dynamic skill/connector routing
-- `genius-lawyer-aggressive-litigation` — available when legal/forensic pressure is required
+- `genius-lawyer-aggressive-litigation` — when legal/forensic pressure is required
 - `postgres-sql` — when data-layer work appears
 
 These are session-level; the durable mesh remains the GitHub peers above.
