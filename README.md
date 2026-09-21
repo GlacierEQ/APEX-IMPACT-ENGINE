@@ -84,6 +84,7 @@ This engine is the **live strategy evaluator** that decides *what* to do next un
 See:
 - [`FOUNDATION.md`](FOUNDATION.md) — durable architectural and quality foundation
 - [`MESH.md`](MESH.md) — peer + pipeline composition contracts
+- [`interfaces/COMPOSITION.yaml`](interfaces/COMPOSITION.yaml) — machine-readable consume/produce edges
 - [`docs/QUALITY_GATES.md`](docs/QUALITY_GATES.md) — evidence-required scoring rules
 - [`docs/AMBITION.md`](docs/AMBITION.md) — executable ambition pressure
 - [`docs/OPERATOR.md`](docs/OPERATOR.md) — human/agent runbook for real missions
@@ -94,21 +95,25 @@ See:
 
 - Remote executable source is live on canonical `main`.
 - The engine implements evidence-required 9+ quality gates, reversible phase transitions, dynamic impact invalidation/reprioritization, anti-heartbeat action selection, ambition pressure, and observe → evaluate → execute → observe continuation.
+- Genius contracts (`ROLE.yaml`, `capabilities/`, `interfaces/COMPOSITION.yaml`) are hardened for family discovery.
 - `tests/test_engine.py` carries behavioral tests covering the binding phase and action-selection invariants.
 - GitHub Actions CI executes the behavioral suite and verifies the example mission resolves to `USE` with real work selected over heartbeat.
 - License: MIT.
-- Local development source remains at `/Users/kcbflux/APEX_SYSTEM/ENGINES/APEX-IMPACT-ENGINE`.
 
 ## Use It
 
 ```bash
 PYTHONPATH=src python -m apex_impact.cli examples/mission.json
 PYTHONPATH=src python -m apex_impact.cli examples/mission_regression.json
+PYTHONPATH=src python -m apex_impact.cli examples/mission_ambition.json
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-- `examples/mission.json` — system already ≥9, results below 9 → must **USE**
-- `examples/mission_regression.json` — prior COMPLETE invalidated by new failure evidence → must regress to **BUILD**
+| Example | Expected behavior |
+|---------|-------------------|
+| `examples/mission.json` | System ≥9, results < 9 → **USE** real work over heartbeat |
+| `examples/mission_regression.json` | Prior COMPLETE + new failure evidence → regress to **BUILD** |
+| `examples/mission_ambition.json` | Stalled mission state → prefer alternate route over repeated same path |
 
 ## Design Invariants
 
