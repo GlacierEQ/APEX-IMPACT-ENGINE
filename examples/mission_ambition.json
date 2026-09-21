@@ -1,0 +1,54 @@
+{
+  "previous_phase": "USE",
+  "mission_state_ref": "mission:fileboss-corpus-v2-stalled",
+  "impacts": [],
+  "system_quality": {
+    "purpose_fit": {"score": 9.4, "evidence": ["provider:dropbox-runtime-proof"]},
+    "capability": {"score": 9.3, "evidence": ["commit:organizer-runtime"]},
+    "reliability": {"score": 9.1, "evidence": ["tests:mutation-readback"]},
+    "integration": {"score": 9.2, "evidence": ["workflow:provider-path"]}
+  },
+  "result_quality": {
+    "mission_progress": {"score": 5.5, "evidence": ["case-state:partial"]},
+    "leverage": {"score": 5.0, "evidence": ["case-state:partial"]},
+    "verified_outcome": {"score": 4.5, "evidence": ["provider:no-new-mutation"]}
+  },
+  "completion_quality": {
+    "completeness": {"score": 3.0, "evidence": ["mission:open"]},
+    "polish": {"score": 3.0, "evidence": ["mission:open"]},
+    "reuse": {"score": 4.0, "evidence": ["mission:open"]}
+  },
+  "objective_achieved": false,
+  "actions": [
+    {
+      "action_id": "retry-same-fileboss-path",
+      "description": "Repeat the same organizer path that has already been tried against unchanged state.",
+      "changes_target_state": true,
+      "scores": {
+        "operator_impact": 7.0,
+        "external_leverage": 6.0,
+        "result_power": 6.5,
+        "readiness": 9.0
+      }
+    },
+    {
+      "action_id": "switch-to-alternate-corpus-route",
+      "description": "Take a materially different executable route: different corpus slice + verification path.",
+      "changes_target_state": true,
+      "scores": {
+        "operator_impact": 8.5,
+        "external_leverage": 8.0,
+        "result_power": 8.8,
+        "evidence_gain": 9.0,
+        "opportunity_gain": 8.5,
+        "readiness": 8.0
+      }
+    },
+    {
+      "action_id": "heartbeat-status",
+      "description": "Another status check.",
+      "flags": ["heartbeat_only", "status_only"],
+      "scores": {"readiness": 10.0}
+    }
+  ]
+}
