@@ -1,3 +1,58 @@
-# Composition contract stub
-name: repo_composition
-description: Stub composition contract for Genius validation
+schema_version: 2
+name: apex-impact-engine-composition
+description: |
+  Composition contract for APEX-IMPACT-ENGINE.
+  Declares how the engine consumes and produces signals relative to the
+  GlacierEQ constellation (mega-skills, Genius-Mastery, aspen-grove-core).
+
+consumes:
+  - kind: mission_snapshot
+    format: json
+    description: Quality scores with evidence, candidate actions, impacts, mission_state_ref
+  - kind: mega_skill_action
+    source: GlacierEQ/mega-skills
+    description: Atomic / compound / mega skill steps offered as candidate actions
+  - kind: pipeline_step
+    source: GlacierEQ/mega-skills
+    pipelines:
+      - inception-to-deployment
+      - control-plane
+      - memory-fleet
+      - change-swe
+      - cultivate-main
+      - anthropic-applied-ai-readiness
+    description: Concrete executable steps from deep-work pipelines
+
+produces:
+  - kind: phase_decision
+    values: [BUILD, USE, POLISH, COMPLETE]
+    description: Current phase under evidence-required ≥9 gates
+  - kind: selected_action
+    description: Highest-impact executable action under current phase + ambition pressure
+  - kind: ambition_pressure
+    range: [0.0, 10.0]
+    description: Bounded pressure that rises on unchanged mission state
+  - kind: ranked_actions
+    description: Full ranked list with scores for transparency and peer consumption
+  - kind: rationale
+    description: Human-readable explanation including deficits, impacts, and ambition state
+
+peers:
+  - id: mega-skills
+    relation: supplies_candidates
+    url: https://github.com/GlacierEQ/mega-skills
+  - id: Genius-Mastery
+    relation: consumes_progress_signals
+    url: https://github.com/GlacierEQ/Genius-Mastery
+  - id: aspen-grove-core
+    relation: observation_substrate
+    url: https://github.com/GlacierEQ/aspen-grove-core
+  - id: apex-control-plane
+    relation: capacity_and_dispatch
+    url: https://github.com/GlacierEQ/apex-control-plane
+
+invariants:
+  - never_redefines_peer_skills
+  - evidence_required_for_scores_ge_9
+  - anti_heartbeat_selection
+  - live_state_not_frozen_plan
