@@ -1,11 +1,35 @@
-schema_version: 1
-id: repo_stack
-purpose: Orchestration
+schema_version: 2
+id: apex-impact-engine-stack
+purpose: ORCHESTRATION
 objective:
-  desired_reality: repo fully validated and APEX‑verified
+  desired_reality: |
+    Continuous, evidence-driven phase judgment and high-impact action selection
+    that advances real missions under BUILD → USE → POLISH → COMPLETE.
 layers:
-  execution: heavy
-  verification: epistemic
-mission_impact: 5
+  observation:
+    description: Ingest mission snapshots, quality scores with evidence, impacts, and mission_state_ref
+    readiness: high
+  phase_judgment:
+    description: Determine BUILD / USE / POLISH / COMPLETE from evidenced quality floors
+    readiness: high
+  action_selection:
+    description: Rank executable actions under phase multipliers, penalties, impacts, and ambition pressure
+    readiness: high
+  ambition:
+    description: Bounded pressure that rises on unchanged mission state and forces route change
+    readiness: high
+  composition:
+    description: Consume mega-skills / pipeline steps as candidate actions; emit phase + selected action
+    readiness: medium
+  verification:
+    description: Behavioral tests + CI that prove anti-heartbeat and phase regression invariants
+    readiness: high
+mission_impact: 9
 verification:
   acceptance: true
+  evidence:
+    - tests/test_engine.py
+    - examples/mission.json
+    - examples/mission_regression.json
+    - docs/QUALITY_GATES.md
+    - docs/AMBITION.md
