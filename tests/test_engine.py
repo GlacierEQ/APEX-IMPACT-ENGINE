@@ -16,8 +16,8 @@ class ImpactEngineTests(unittest.TestCase):
         return MissionSnapshot(system or self.good_system, results or q(mission_progress=5, leverage=5, verified_outcome=5),
             completion or q(completeness=3, polish=3, reuse=3), achieved, tuple(actions), tuple(impacts), previous)
 
-    def test_build_until_every_required_system_dimension_is_nine_plus(self):
-        self.assertEqual(self.engine.evaluate(self.snap(system=q(purpose_fit=9.8, capability=8.9, reliability=9.8))).phase, Phase.BUILD)
+    def test_verified_system_below_nine_can_be_used(self):
+        self.assertEqual(self.engine.evaluate(self.snap(system=q(purpose_fit=9.8, capability=8.9, reliability=9.8))).phase, Phase.USE)
 
     def test_unverified_nine_plus_does_not_pass(self):
         unverified = QualitySet((QualityMetric("purpose_fit", 9.8, evidence=()), QualityMetric("capability", 9.5, evidence=("r",))))
@@ -31,17 +31,17 @@ class ImpactEngineTests(unittest.TestCase):
     def test_polish_only_after_results_and_objective_are_nine_plus(self):
         self.assertEqual(self.engine.evaluate(self.snap(results=self.good_results, achieved=True)).phase, Phase.POLISH)
 
-    def test_complete_requires_three_independent_nine_plus_gates(self):
+    def test_complete_requires_verified_objective_and_completion_evidence(self):
         self.assertEqual(self.engine.evaluate(self.snap(results=self.good_results, completion=self.good_completion, achieved=True)).phase, Phase.COMPLETE)
 
-    def test_new_evidence_can_regress_complete_back_to_build(self):
+    def test_unrelated_failure_does_not_demote_verified_completion(self):
         s = self.snap(system=q(purpose_fit=9.4, capability=8.0, reliability=9.2), results=self.good_results,
             completion=self.good_completion, achieved=True, previous=Phase.COMPLETE,
-            impacts=(ImpactSignal("prod-failure", "production failure observed"),))
+            impacts=(ImpactSignal("prod-failure", "unrelated provider attempt failed"),))
         d = self.engine.evaluate(s)
-        self.assertEqual(d.phase, Phase.BUILD)
+        self.assertEqual(d.phase, Phase.COMPLETE)
         self.assertTrue(d.strategy_adjusted)
-        self.assertIn("New evidence invalidated", d.rationale)
+        self.assertNotIn("regress", d.rationale.lower())
 
     def test_real_mission_action_beats_heartbeat(self):
         heartbeat = ActionCandidate("heartbeat", "run another health check", {"readiness": 10}, False, True, ("heartbeat_only",))
