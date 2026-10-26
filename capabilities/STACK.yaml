@@ -10,7 +10,7 @@ layers:
     description: Ingest mission snapshots, quality scores with evidence, impacts, and mission_state_ref
     readiness: high
   phase_judgment:
-    description: Determine BUILD / USE / POLISH / COMPLETE from evidenced quality floors
+    description: Determine BUILD / USE / POLISH / COMPLETE from objective state, evidence references and executable work; no numeric quality gate
     readiness: high
   action_selection:
     description: Rank executable actions under phase multipliers, penalties, impacts, and ambition pressure
@@ -22,7 +22,7 @@ layers:
     description: Consume mega-skills / pipeline steps as candidate actions; emit phase + selected action
     readiness: medium
   verification:
-    description: Behavioral tests + CI that prove anti-heartbeat and phase regression invariants
+    description: Behavioral tests + CI that prove anti-heartbeat selection, scoped recovery and positive-outcome preservation
     readiness: high
 mission_impact: 9
 verification:
