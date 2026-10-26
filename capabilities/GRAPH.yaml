@@ -21,7 +21,7 @@ nodes:
     kind: capability
     readiness: high
   - id: evidence_gate
-    label: Evidence-Required Quality Gates
+    label: Source-Backed Evidence Checks (No Numeric Gate)
     kind: capability
     readiness: high
   - id: composition
@@ -29,7 +29,7 @@ nodes:
     kind: capability
     readiness: medium
   - id: regression
-    label: Phase Regression on New Failure Evidence
+    label: Scoped Reopening on Actual Objective or Evidence Loss
     kind: capability
     readiness: high
 edges:
@@ -47,10 +47,10 @@ edges:
     relation: filters
   - from: evidence_gate
     to: phase_judgment
-    relation: gates
+    relation: informs_phase
   - from: composition
     to: action_selection
     relation: supplies_candidates
   - from: observation
     to: regression
-    relation: triggers
+    relation: prompts_reconciliation

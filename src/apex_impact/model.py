@@ -37,18 +37,33 @@ class QualitySet:
     def required_metrics(self) -> tuple[QualityMetric, ...]:
         return tuple(m for m in self.metrics if m.required)
 
-    def passes(self, threshold: float = QUALITY_THRESHOLD) -> bool:
+    def evidence_ready(self) -> bool:
+        """All declared required facts have at least one source reference.
+
+        A quality *score* is advisory. It cannot erase a provider receipt or
+        prevent independent execution merely because it is below 9/10.
+        """
         required = self.required_metrics()
-        return bool(required) and all(m.score >= threshold and m.verified for m in required)
+        return bool(required) and all(m.verified for m in required)
+
+    def passes(self, threshold: float = QUALITY_THRESHOLD) -> bool:
+        """Compatibility API: evidence readiness, not an arbitrary score gate.
+
+        The threshold argument is retained for consumers that supply it, but
+        subjective scores do not control execution or completion.
+        """
+        return self.evidence_ready()
 
     def deficits(self, threshold: float = QUALITY_THRESHOLD) -> tuple[str, ...]:
-        deficits: list[str] = []
-        for m in self.required_metrics():
-            if m.score < threshold:
-                deficits.append(f"{m.name}:{m.score:.1f}")
-            elif not m.verified:
-                deficits.append(f"{m.name}:UNVERIFIED")
-        return tuple(deficits)
+        """Only missing source evidence is a verification deficit."""
+        return tuple(f"{m.name}:UNVERIFIED" for m in self.required_metrics() if not m.verified)
+
+    def score_warnings(self, threshold: float = QUALITY_THRESHOLD) -> tuple[str, ...]:
+        """Informational quality observations; never phase-gating."""
+        return tuple(
+            f"{m.name}:{m.score:.1f}" for m in self.required_metrics()
+            if m.score < threshold
+        )
 
     def floor(self) -> float:
         required = self.required_metrics()

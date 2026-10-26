@@ -26,3 +26,7 @@ jobs:
           PYTHONPATH=src python -m apex_impact.cli examples/mission.json > /tmp/decision.json
           grep '"phase": "USE"' /tmp/decision.json
           grep '"selected_action": "use-fileboss"' /tmp/decision.json
+      - name: Completed outcome survives unrelated incident
+        run: |
+          PYTHONPATH=src python -m apex_impact.cli examples/mission_regression.json > /tmp/completion-decision.json
+          python -c 'import json; d=json.load(open("/tmp/completion-decision.json")); assert d["phase"] == "COMPLETE", d; assert d["selected_action"] is None, d'

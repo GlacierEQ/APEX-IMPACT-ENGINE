@@ -36,9 +36,9 @@ The state file is a simple JSON receipt of:
 - repeated-action cycles
 - current ambition_pressure (0–10 scale)
 
-## Interaction with Phase Gates
+## Interaction with Source-Backed Phases
 
-Ambition operates **inside** the current phase. It does not override BUILD / USE / POLISH / COMPLETE determination. It only changes which *executable* action is preferred when the mission state has not moved.
+Ambition operates **inside** the current source-backed phase. It does not impose a numeric quality threshold or override BUILD / USE / POLISH / COMPLETE determination. It changes only which *executable* action is preferred when the mission state has not moved. A successful source-native recovery clears the no-progress condition and must not be eclipsed by a stale earlier failed attempt.
 
 ## Self-Application
 

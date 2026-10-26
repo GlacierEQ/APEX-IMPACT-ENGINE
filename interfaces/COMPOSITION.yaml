@@ -26,7 +26,7 @@ consumes:
 produces:
   - kind: phase_decision
     values: [BUILD, USE, POLISH, COMPLETE]
-    description: Current phase under evidence-required ≥9 gates
+    description: Current phase under source-backed objective/evidence conditions, without numeric execution gates
   - kind: selected_action
     description: Highest-impact executable action under current phase + ambition pressure
   - kind: ambition_pressure
@@ -53,6 +53,6 @@ peers:
 
 invariants:
   - never_redefines_peer_skills
-  - evidence_required_for_scores_ge_9
+  - material_outcome_claims_require_source_native_evidence
   - anti_heartbeat_selection
   - live_state_not_frozen_plan

@@ -72,13 +72,25 @@ class ImpactEngine:
         self._load_ambition_state()
 
     def determine_phase(self, snapshot: MissionSnapshot) -> Phase:
-        if not snapshot.system_quality.passes(self.threshold):
-            return Phase.BUILD
-        if not snapshot.result_quality.passes(self.threshold) or not snapshot.objective_achieved:
-            return Phase.USE
-        if not snapshot.completion_quality.passes(self.threshold):
+        """Choose work from source-backed achievement, not subjective 9/10 gates.
+
+        Independent executable action is never held behind a quality score.
+        Evidence about a completed result remains valid when an unrelated
+        system or connector attempt fails.
+        """
+        result_proven = snapshot.result_quality.evidence_ready()
+        if snapshot.objective_achieved and result_proven:
+            if snapshot.completion_quality.evidence_ready():
+                return Phase.COMPLETE
             return Phase.POLISH
-        return Phase.COMPLETE
+
+        source_action_ready = any(
+            action.executable_now and (action.changes_target_state or action.unblocks_mission)
+            for action in snapshot.actions
+        )
+        if snapshot.system_quality.evidence_ready() or source_action_ready:
+            return Phase.USE
+        return Phase.BUILD
 
     @property
     def no_progress_cycles(self) -> int:
@@ -197,26 +209,34 @@ class ImpactEngine:
             self._last_selected_action = selected
 
         if phase is Phase.BUILD:
-            deficits = tuple(f"system.{d}" for d in snapshot.system_quality.deficits(self.threshold))
-            rationale = "Improve only purpose-critical system deficiencies until every required, evidenced dimension is 9+."
+            deficits = tuple(f"system.{d}" for d in snapshot.system_quality.deficits())
+            if not snapshot.system_quality.required_metrics():
+                deficits += ("system.evidence_not_declared",)
+            rationale = "Recover proof of usable capability or produce an executable source-backed bridge; no numeric score is an execution gate."
         elif phase is Phase.USE:
-            deficits = tuple(f"result.{d}" for d in snapshot.result_quality.deficits(self.threshold))
+            deficits = tuple(f"result.{d}" for d in snapshot.result_quality.deficits())
             if not snapshot.objective_achieved:
                 deficits += ("result.objective_not_yet_achieved",)
-            rationale = "System is exceptional enough: stop polishing machinery and use it for powerful mission progress until evidenced results are 9+."
+            rationale = "Advance the real mission using available capability and executable actions; subjective quality scores are advisory."
         elif phase is Phase.POLISH:
-            deficits = tuple(f"completion.{d}" for d in snapshot.completion_quality.deficits(self.threshold))
-            rationale = "Excellent results exist: finish closure, presentation, handoff, durability, and residual defects to evidenced 9+ completion."
+            deficits = tuple(f"completion.{d}" for d in snapshot.completion_quality.deficits())
+            if not snapshot.completion_quality.required_metrics():
+                deficits += ("completion.evidence_not_declared",)
+            rationale = "The result is achieved and source-backed; finish only the specific missing completion evidence."
         else:
             deficits = ()
-            rationale = "System, results, and completion independently clear evidenced 9+ gates: preserve gains and move to the next highest-value mission."
+            rationale = "Objective and completion milestones are source-backed. Preserve working gains and advance to the next objective."
 
         impact_trace = tuple(f"{i.signal_id}: {i.summary}" for i in snapshot.impacts)
         adjusted = bool(snapshot.impacts) or (
             snapshot.previous_phase is not None and snapshot.previous_phase != phase
         )
         if snapshot.previous_phase is not None and _PHASE_ORDER[phase] < _PHASE_ORDER[snapshot.previous_phase]:
-            rationale = "New evidence invalidated a prior gate; regress to the necessary phase. " + rationale
+            rationale = (
+                "The current objective or its source evidence no longer supports the earlier phase; "
+                "reopen only the affected milestone and preserve independent verified gains. "
+                + rationale
+            )
         if impact_trace:
             rationale += " Strategy re-evaluated for material impacts: " + "; ".join(impact_trace)
         if self._no_progress_cycles:

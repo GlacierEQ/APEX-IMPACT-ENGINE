@@ -22,4 +22,4 @@ def run_until_boundary(
         execute(last)
     if last is None:
         raise RuntimeError("no evaluation occurred")
-    raise RuntimeError("max_steps reached before a genuine boundary or 9+ completion")
+    raise RuntimeError("max_steps reached before a source-backed completion or actual execution boundary")

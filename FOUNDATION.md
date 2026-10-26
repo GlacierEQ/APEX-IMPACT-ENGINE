@@ -13,48 +13,39 @@ It is deliberately narrow. It does not own capability libraries, entity synthesi
 ## 2. Phase State Machine
 
 ```text
-                  ┌───────────────┐
-                  │     BUILD       │
-                  │  (system ≥9)   │
-                  └────────┬───────┘
-                             │
-                             ▼
-                  ┌───────────────┐
-                  │      USE        │
-                  │ (results ≥9)    │
-                  └────────┬───────┘
-                             │
-                             ▼
-                  ┌───────────────┐
-                  │    POLISH       │
-                  │ (completion ≥9) │
-                  └────────┬───────┘
-                             │
-                             ▼
-                  ┌───────────────┐
-                  │   COMPLETE      │
-                  │ (all gates)     │
-                  └────────┬───────┘
-                             │
-              (new failure evidence)
-                             │
-                             ▼
-                        back to BUILD / USE
+           ┌────────────────────────────────────────────────┐
+           │ BUILD: no referenced system readiness          │
+           │ AND no independent executable mission action  │
+           └───────────────────────┬────────────────────────┘
+                                   │ evidence reference OR executable action
+                                   ▼
+           ┌────────────────────────────────────────────────┐
+           │ USE: objective outstanding; act on real work   │
+           └───────────────────────┬────────────────────────┘
+                                   │ objective achieved AND result references
+                                   ▼
+           ┌────────────────────────────────────────────────┐
+           │ POLISH: only specific handoff proof is missing │
+           └───────────────────────┬────────────────────────┘
+                                   │ completion references present
+                                   ▼
+           ┌────────────────────────────────────────────────┐
+           │ COMPLETE: preserve objective and handoff gains │
+           └────────────────────────────────────────────────┘
 ```
 
-Regression is first-class. New material evidence can force COMPLETE → USE or COMPLETE → BUILD. There is no permanent “done.”
+**No quality-score gate.** Numeric assessments help prioritize investment; they never become a global prohibition on execution. A failed tool attempt is history about that attempt, not a phase rollback. The engine may reopen USE when the objective is actually no longer achieved, or POLISH when completion evidence is genuinely missing. It must preserve independent verified gains.
+
 
 ## 3. Evidence Discipline
 
-Any quality claim ≥ 9.0 must carry:
+- Keep source-native references for material mission, result, and completion claims: provider IDs, commits, hashes, actual test runs, and acknowledgments.
+- Evidence-reference presence is the minimum data-model signal, not independent authentication; validate the actual referenced source before claiming provider verification.
+- An unreferenced required result or handoff metric is `UNVERIFIED` and cannot be treated as completed proof, regardless of its score.
+- A verified success remains authoritative over an earlier superseded failed attempt. Historical errors remain inspectable but do not silently become active blockers.
+- On a real contradiction, scope correction to the affected claim, preserve unrelated finished milestones, and keep executable alternatives available.
+- Source-specific factual uncertainty does not imply mission-wide denial. A score below 9/10 is advisory, not a universal gate.
 
-- Explicit dimension name
-- Numeric score
-- One or more concrete evidence references (file path, test name, log URI, external result ID, etc.)
-- Timestamp / observation context
-
-Absence of evidence → status = `UNVERIFIED`.  
-UNVERIFIED scores never satisfy a gate.
 
 ## 4. Action Selection Invariants
 
@@ -74,11 +65,13 @@ This engine is a **consumer and producer of state**, not a capability owner.
 
 ## 6. Quality Philosophy (Self-Application)
 
-The engine is required to apply its own standards to itself:
+The engine must meet the same evidence discipline it expects of missions:
 
-- System quality of the engine code/tests/docs must clear ≥9 with evidence before it is allowed to live in USE for high-stakes missions.
-- Result quality is measured by real external outcomes (not internal activity).
-- Completion quality includes third-party handoff, documentation, and durability of the gains.
+- Behavioral claims are substantiated by focused and full-suite tests of the actual changed head, plus inspectable CI output.
+- Operational claims require the applicable provider-native readback; passing tests alone is not deployment or mission success.
+- Mission quality is assessed against the Operator's objective, not an invented threshold. Retain working capabilities while improving measured shortcomings.
+- Handoff quality includes accurate documentation, durable references, recoverability, and explicit residual gaps.
+
 
 ## 7. Non-Goals
 
@@ -89,4 +82,5 @@ The engine is required to apply its own standards to itself:
 
 ## 8. Evolution Rule
 
-Any change that weakens the evidence requirement, softens the anti-heartbeat bias, or allows unverified scores to satisfy gates is a **regression** and must be treated as a BUILD-blocking defect.
+Any change that fabricates source evidence, treats status reports as completed work, erases a verified success, hides a material contradiction, or blocks executable actions behind invented numeric gates is a regression. Fix only the affected fact or implementation and preserve previously verified functionality. Failed connector calls trigger valid alternate routes; they do not establish permanent incapacity.
+

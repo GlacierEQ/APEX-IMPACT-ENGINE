@@ -20,7 +20,7 @@ APEX-IMPACT-ENGINE/
 │   └── OPERATOR.md
 ├── examples/
 │   ├── mission.json                 # USE over heartbeat
-│   ├── mission_regression.json      # COMPLETE → BUILD
+│   ├── mission_regression.json      # unrelated incident retains verified COMPLETE
 │   └── mission_ambition.json        # route change under pressure
 ├── src/apex_impact/
 │   ├── engine.py                    # phase + selector + ambition
@@ -43,9 +43,9 @@ APEX-IMPACT-ENGINE/
 
 `model.py` defines qualified state.  
 `engine.py` determines phase, ranks actions, applies ambition pressure.  
-`runner.py` re-observes so material changes can advance or regress strategy.  
+`runner.py` re-observes so real losses can reopen only the affected outcome while completed source-backed milestones stay preserved.  
 `cli.py` is the machine boundary for peers.
 
 ## Foundation Responsibility
 
-Contracts, docs, and examples are part of completion quality. They must stay aligned with the live implementation. Stale foundation is a POLISH defect; weakened enforcement is a BUILD defect.
+Contracts, docs, and examples are part of completion quality. They must stay aligned with the live implementation. Stale documentation is a scoped reconciliation defect, never an automatic stop on independently verified working capabilities.

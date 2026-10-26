@@ -1,59 +1,49 @@
-# QUALITY GATES
+# SOURCE-BACKED PHASE AND QUALITY CONTRACT
 
-These rules are binding for both the engine itself and any mission it evaluates.
+This contract applies to APEX-IMPACT-ENGINE and the missions it evaluates. The binding requirement is **truthful evidence and actual mission progress**, never a universal numeric rating.
 
-## Gate Threshold
+## Source-specific phase conditions
 
-Every required quality dimension must reach **≥ 9.0** with valid evidence before the corresponding phase gate can open.
+| Phase | Condition | Required action |
+|---|---|---|
+| BUILD | Neither referenced system evidence nor an independently executable target-changing/unblocking action is available | Recover working capability, source references, or an executable alternate route |
+| USE | Capability has referenced evidence **or** an independent mission action is executable; objective remains outstanding | Execute actual mission work |
+| POLISH | Objective is achieved and required result references are present, but completion references are missing | Resolve only the missing completion proof |
+| COMPLETE | Objective is achieved and required result and completion evidence references are present | Preserve success and its receipts; move to the next authorized objective |
 
-A score of 8.9 (or lower) blocks advancement regardless of how many other dimensions are 10.0.
+A declared metric's `score` can guide prioritization, but **8.9 is not a global stop condition**. The engine accepts evidence-reference presence as a structural phase signal. Actual source provenance and provider-side verification must be checked separately whenever a material claim depends on them.
 
-## Required Dimensions (Minimum Set)
+## Required evidence domains
 
-| Dimension | Applies to | Description |
-|-----------|------------|-------------|
-| System Quality | BUILD | Code, tests, architecture, observability, security of the system under evaluation |
-| Result Quality | USE | Measurable external / mission outcomes produced by using the system |
-| Completion Quality | POLISH | Handoff readiness, documentation, durability, residual polish, third-party evaluability |
+| Domain | Examples of source facts | What it proves |
+|---|---|---|
+| System | Relevant passing behavioral tests, verified accessible tool, working capability receipt | Capability for the specific operation |
+| Result | Source-native provider receipt, material state change, docket entry, GitHub commit | The particular outcome claimed |
+| Completion | Handoff receipt, complete artifact readback, documented closure of the requested deliverable | The particular completion claim |
 
-Additional mission-specific dimensions may be declared, but they cannot replace the three above.
+Additional mission-specific dimensions may be declared. Missing references to required result or completion metrics are reported as `UNVERIFIED`, scoped to the named metric. Evidence-reference presence does not prove that a URL, receipt or test actually says what a claim alleges.
 
-## Evidence Requirements
+## Positive and negative evidence
 
-For any claim ≥ 9.0 the following must be present and resolvable:
+1. **Solution precedence:** A successful recovery with a verified readback supersedes the earlier failed attempt as current state. Retain both chronologically.
+2. **No automatic regression:** An unrelated provider failure does not reopen a completed objective, remove a working capability or create a universal execution gate.
+3. **Real losses matter:** If the objective is no longer achieved or required evidence is genuinely missing, reopen only that corresponding outcome or handoff step.
+4. **Alternative route:** One failed connector call initiates materially different authorized routes. Continue independent executable work without re-requesting already satisfied prerequisites.
+5. **Provider facts control:** Projected task statuses, stale memory and subjective quality numbers cannot overwrite a source-native receipt.
 
-```yaml
-dimension: system_quality
-score: 9.4
-evidence:
-  - type: test
-    ref: tests/test_phase_transitions.py::test_complete_to_build_regression
-  - type: file
-    ref: src/selector/action_scorer.py
-  - type: external
-    ref: https://example.com/result/12345
-observed_at: 2026-09-09T00:00:00Z
-```
+## Anti-patterns
 
-Missing, unresolvable, or obviously stale evidence → status becomes `UNVERIFIED`.
+- Averaging high scores to hide genuinely missing required evidence
+- Enforcing `>= 9` as an invented prerequisite to use functioning capabilities
+- Converting transient errors into permanent prohibitions
+- Treating activity count, heartbeat or status reports as results
+- Treating a repository instruction edit as deployment or provider-verified behavior
+- Claiming completed results based solely on an uninspected evidence-reference string
 
-`UNVERIFIED` scores never satisfy a gate.
+## Engine self-verification
 
-## Anti-Patterns Explicitly Forbidden
+Before claiming the implementation is tested, run its actual behavioral suite and inspect output. Before claiming integration, review dependent interfaces and the changed head. Before claiming deployed/operational, obtain the corresponding runtime/provider receipt.
 
-- Averaging multiple dimensions to hide a weak one
-- Using activity volume or recency as a proxy for result quality
-- Accepting self-attestation without external or test evidence when the claim is material
-- Advancing phase while any required dimension is UNVERIFIED or < 9.0
+## Change control
 
-## Self-Application
-
-When the engine evaluates *itself* (or is evaluated by the constellation):
-
-1. System quality must be evidenced by the test suite + source structure + this documentation set.
-2. Result quality must eventually be evidenced by real missions that used the engine and produced measurable outcomes.
-3. Completion quality includes the presence of FOUNDATION.md, MESH.md, this file, and a clean third-party clone/run path.
-
-## Change Control
-
-Any modification that lowers the threshold, weakens evidence requirements, or introduces a bypass is a **BUILD-blocking regression** and must be treated as a defect until corrected and re-evidenced.
+Preserve source history, source-specific confidence, security and provider permissions. Updates that erase verified progress, invent proof, or reintroduce arbitrary score-based execution gates are defects. The source-native reconciliation and the highest-value executable mission objective remain the governing behavior.
