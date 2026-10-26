@@ -14,7 +14,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 ## Real Mission Loop
 
 1. **Prepare a mission snapshot** (JSON) that contains:
-   - current quality scores with evidence for system / result / completion
+   - evidence references for system / result / completion; quality scores are advisory, not pass/fail gates
    - `objective_achieved` boolean
    - candidate actions with scores, flags, and `changes_target_state` / `unblocks_mission`
    - optional `impacts` that can invalidate or re-score actions
@@ -33,12 +33,12 @@ PYTHONPATH=src python -m apex_impact.cli --ambition-state "$APEX_AMBITION_STATE"
    - If ambition pressure is rising, prefer actions that actually move the mission state.
 
 4. **Record verified progress**
-   - When real external movement occurs, update the mission snapshot (new evidence, new scores, new `mission_state_ref`).
+   - When real external movement occurs, update the mission snapshot (source-native evidence, objective status and new `mission_state_ref`). Preserve already-verified gains over superseded failure reports.
    - Optionally call `record_verified_progress` so ambition pressure resets cleanly.
 
 5. **Re-observe**
    - Feed the updated snapshot back into the engine.
-   - Material new evidence can regress COMPLETE → USE or COMPLETE → BUILD. Do not protect the old phase label.
+   - Reconcile any real change to the objective or required evidence; reopen only affected milestones. An unrelated tool failure never automatically demotes a source-verified completed objective.
 
 ## Composition with Mega-Skills & Pipelines
 
@@ -57,6 +57,6 @@ Before trusting the engine on a high-stakes mission:
 - [ ] `python -m unittest discover -s tests -v` is green
 - [ ] Example mission resolves to USE and selects the real-work action over heartbeat
 - [ ] FOUNDATION.md, MESH.md, QUALITY_GATES.md, and AGENTS.md still match implementation
-- [ ] Any claimed system quality ≥ 9 has resolvable evidence
+- [ ] Material claimed outcomes have source-native evidence that was independently inspected, not merely a nonempty reference field
 
-If any of the above fail, the engine itself is still in BUILD.
+A failing check limits the specific affected operational claim or next step. It does not erase prior verified functionality or create a universal BUILD hold.
