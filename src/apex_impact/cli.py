@@ -26,7 +26,7 @@ def _snapshot(data: dict) -> MissionSnapshot:
         bool(data.get("objective_achieved", False)), actions, impacts, Phase(previous) if previous else None, data.get("mission_state_ref"))
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Continuously evaluate impact and choose the correct evidenced 9+ phase/action.")
+    parser = argparse.ArgumentParser(description="Evaluate source-backed mission progress and select the next executable action.")
     parser.add_argument("snapshot", type=Path)
     parser.add_argument("--ambition-state", type=Path, default=os.getenv("APEX_AMBITION_STATE"))
     args = parser.parse_args()
