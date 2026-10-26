@@ -28,8 +28,14 @@ class ImpactEngineTests(unittest.TestCase):
     def test_use_when_system_is_exceptional_but_results_are_not(self):
         self.assertEqual(self.engine.evaluate(self.snap()).phase, Phase.USE)
 
-    def test_polish_only_after_results_and_objective_are_nine_plus(self):
-        self.assertEqual(self.engine.evaluate(self.snap(results=self.good_results, achieved=True)).phase, Phase.POLISH)
+    def test_polish_only_when_handoff_evidence_is_missing(self):
+        unverified_handoff = QualitySet((QualityMetric("archive", 8.0, evidence=()),))
+        self.assertEqual(
+            self.engine.evaluate(
+                self.snap(results=self.good_results, completion=unverified_handoff, achieved=True)
+            ).phase,
+            Phase.POLISH,
+        )
 
     def test_complete_requires_verified_objective_and_completion_evidence(self):
         self.assertEqual(self.engine.evaluate(self.snap(results=self.good_results, completion=self.good_completion, achieved=True)).phase, Phase.COMPLETE)
